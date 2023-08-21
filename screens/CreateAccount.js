@@ -1,3 +1,11 @@
+/*
+PARTS WITH CHANGES
+
+1. All TextInput ===>> changed all onChange to onChangeText
+2. {({ handleChange, handleBlur, handleSubmit, values, touched }) ===>> added errors
+3. <Text style={styles.errorText}>error</Text> ===>> some logic
+*/
+
 import { 
     View,
     Text,
@@ -31,10 +39,10 @@ export function CreateAccount({navigation}) {
                 <View style={styles.form}>
                     <Formik
                         initialValues={{ fName:'',lName:'',email:'',password:'',passwordConfirmation:'' }}
-                        onSubmit={values => console.log(values.email)}
+                        onSubmit={values => console.log('>>>>>',values.email)}
                         validationSchema={schema}
                     >
-                        {({ handleChange, handleBlur, handleSubmit, values, touched }) => (
+                        {({ handleChange, handleBlur, handleSubmit, values, touched,errors }) => (
                             <>
                              <View>
                                 <TextInput
@@ -43,26 +51,32 @@ export function CreateAccount({navigation}) {
                                 onChangeText={handleChange('fName')}
                                 onBlur={handleBlur('fName')}
                                 placeholder='first name'/>
-                                <Text style={styles.errorText}>error</Text>
+                                {errors.fName && touched.fName 
+                                ? <Text style={styles.errorText}>{errors.fName}</Text> 
+                                : null}
                             </View>
                              <View>
                                 <TextInput
                                 mode='outlined'
                                 value={values.lName}
-                                onChange={handleChange('lName')}
+                                onChangeText={handleChange('lName')}
                                 onBlur={handleBlur('lName')}
                                 placeholder='last name'/>
-                                <Text style={styles.errorText}>error</Text>
+                                {errors.lName && touched.lName 
+                                ? <Text style={styles.errorText}>{errors.lName}</Text> 
+                                : null}
                             </View>
                              <View>
                                 <TextInput
                                 mode='outlined'
                                 keyboardType='email-address'
                                 value={values.email}
-                                onChange={handleChange('email')}
+                                onChangeText={handleChange('email')}
                                 onBlur={handleBlur('email')}
                                 placeholder='email address'/>
-                                <Text style={styles.errorText}>error</Text>
+                                {errors.email && touched.email 
+                                ? <Text style={styles.errorText}>{errors.email}</Text> 
+                                : null}
                             </View>
                              <View>
                                 <TextInput
@@ -70,10 +84,12 @@ export function CreateAccount({navigation}) {
                                 keyboardType='default'
                                 secureTextEntry={true}
                                 value={values.password}
-                                onChange={handleChange('password')}
+                                onChangeText={handleChange('password')}
                                 onBlur={handleBlur('password')}
                                 placeholder='create password'/>
-                                <Text style={styles.errorText}>error</Text>
+                                {errors.password && touched.password 
+                                ? <Text style={styles.errorText}>{errors.password}</Text> 
+                                : null}
                             </View>
                              <View>
                                 <TextInput
@@ -81,7 +97,7 @@ export function CreateAccount({navigation}) {
                                 keyboardType='default'
                                 secureTextEntry={true}
                                 value={values.passwordConfirmation}
-                                onChange={handleChange('passwordConfirmation')}
+                                onChangeText={handleChange('passwordConfirmation')}
                                 onBlur={handleBlur('passwordConfirmation')}
                                 placeholder='confirm password'/>
                             </View>
@@ -129,7 +145,8 @@ const styles = StyleSheet.create({
         gap:8,
     },
     errorText:{
-        
+        fontSize:12,
+        color:theme.colors.red,
     },
     existingUser:{
         flexDirection:'row',
