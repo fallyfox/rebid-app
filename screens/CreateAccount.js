@@ -1,11 +1,3 @@
-/*
-PARTS WITH CHANGES
-
-1. All TextInput ===>> changed all onChange to onChangeText
-2. {({ handleChange, handleBlur, handleSubmit, values, touched }) ===>> added errors
-3. <Text style={styles.errorText}>error</Text> ===>> some logic
-*/
-
 import { 
     View,
     Text,
@@ -13,12 +5,15 @@ import {
     StyleSheet,
     TouchableOpacity,
     StatusBar,
-    Platform
+    Platform,
+    Alert
 } from 'react-native';
 import { TextInput,Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import { theme } from '../config/theme';
 import * as yup from 'yup';
+import { authentication } from '../config/firebase.config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const schema = yup.object().shape({
     fName:yup.string().min(3).required(),
@@ -31,6 +26,26 @@ const schema = yup.object().shape({
 
 export function CreateAccount({navigation}) {
 
+    const handleCreateAccount = async (email,pass) => {
+        await createUserWithEmailAndPassword(authentication,email,pass)
+        .then(() => Alert.alert(
+            'Status Report',
+            'Your account was created successfuly',
+            [{
+                text:'Proceed',
+                onPress:() => navigation.navigate('my-home')
+            }]
+        ))
+        .catch((e) => Alert.alert(
+            'Status Report',
+            'An error has occured!',
+            [{
+                text:'Dismiss',
+                onPress:console.error(e)
+            }]
+        ))
+    }
+
     return (
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
@@ -39,7 +54,9 @@ export function CreateAccount({navigation}) {
                 <View style={styles.form}>
                     <Formik
                         initialValues={{ fName:'',lName:'',email:'',password:'',passwordConfirmation:'' }}
-                        onSubmit={values => console.log('>>>>>',values.email)}
+                        onSubmit={values => {
+                            handleCreateAccount(values.email,values.password)
+                        }}
                         validationSchema={schema}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, touched,errors }) => (
