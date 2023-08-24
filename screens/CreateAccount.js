@@ -13,7 +13,9 @@ import { Formik } from 'formik';
 import { theme } from '../config/theme';
 import * as yup from 'yup';
 import { authentication } from '../config/firebase.config';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
+import { db } from '../config/firebase.config';
+import { setDoc,doc } from 'firebase/firestore';
 
 const schema = yup.object().shape({
     fName:yup.string().min(3).required(),
@@ -26,16 +28,32 @@ const schema = yup.object().shape({
 
 export function CreateAccount({navigation}) {
 
-    const handleCreateAccount = async (email,pass) => {
+    const handleCreateAccount = async (email,pass,fName,lName) => {
         await createUserWithEmailAndPassword(authentication,email,pass)
-        .then(() => Alert.alert(
-            'Status Report',
-            'Your account was created successfuly',
-            [{
-                text:'Proceed',
-                onPress:() => navigation.navigate('my-home')
-            }]
-        ))
+        .then(() => {            
+            onAuthStateChanged(authentication,(user) => {
+                const uid = user.uid;
+
+                const res = setDoc(doc(db,'users',uid),{
+                    firstName:fName,
+                    lastName:lName,
+                    email:email,
+                    createdAt:new Date().getTime(),
+                });
+
+                res 
+                ?
+                Alert.alert(
+                    'Status Report',
+                    'Your account was created successfuly',
+                    [{
+                        text:'Proceed',
+                        onPress:() => navigation.navigate('my-home')
+                    }]
+                )
+                : (e) => console.log('auth successfull BUT failed to write to firestore',e)
+            })
+        })
         .catch((e) => Alert.alert(
             'Status Report',
             'An error has occured!',
@@ -55,7 +73,7 @@ export function CreateAccount({navigation}) {
                     <Formik
                         initialValues={{ fName:'',lName:'',email:'',password:'',passwordConfirmation:'' }}
                         onSubmit={values => {
-                            handleCreateAccount(values.email,values.password)
+                            handleCreateAccount(values.email,values.password,values.fName,values.lName)
                         }}
                         validationSchema={schema}
                     >
