@@ -9,12 +9,12 @@ import {
     FlatList,
     StatusBar,
     Platform,
-    ActivityIndicator
 } from 'react-native';
 import { theme } from '../config/theme';
 import { db } from '../config/firebase.config';
 import { getDocs,collection } from 'firebase/firestore';
 import { CommaSepNum } from '../utilities/comma-sep-num';
+import { ScreenLoaderIndicator } from '../utilities/screen-loader-indicator';
 
 export function Auctions({navigation}) {
     const [auctions,setAuctions] = React.useState([]);
@@ -65,11 +65,7 @@ export function Auctions({navigation}) {
             </View>    
         </SafeAreaView>
         :
-        <SafeAreaView style={styles.wrapper}>
-            <View style={{flex:1, justifyContent:'center',alignItems:'center'}}>
-                <View><ActivityIndicator size="large" color={theme.colors.navy} /></View>
-            </View>
-        </SafeAreaView>
+        <ScreenLoaderIndicator/>
     )
 }
 
