@@ -3,6 +3,7 @@ import { Starter } from "./Starter";
 import { Home } from "./Home";
 import { CreateAccount } from "./CreateAccount";
 import { Signin } from "./Signin";
+import { Auctions } from "./Auctions";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export function StackNavigation() {
             <Stack.Screen name="starter" component={Starter}/>
             <Stack.Screen name="create-account" component={CreateAccount}/>
             <Stack.Screen name="signin" component={Signin}/>
+            <Stack.Screen name="auctions" component={Auctions}/>
         </Stack.Navigator>
     )
 }

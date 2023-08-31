@@ -23,7 +23,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
-function MyHome() {
+function MyHome({navigation}) {
 
     return (
         <SafeAreaView style={styles.wrapper}>
@@ -35,7 +35,10 @@ function MyHome() {
                 {/* categories block */}
                 <View style={styles.categoriesBlock}>
                     {categories.map(cat => (
-                        <TouchableOpacity style={styles.catOption} key={cat.id}>
+                        <TouchableOpacity 
+                        style={styles.catOption} 
+                        key={cat.id}
+                        onPress={() => navigation.navigate('auctions')}>
                             <FontAwesomeIcon 
                             icon={cat.icon} 
                             size={40}
@@ -76,7 +79,12 @@ function MyHome() {
                 </View>
 
                 <View style={styles.recentBlock}>
-                    <Text style={styles.expSoonText}>Recent auctions</Text>
+                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                        <Text style={styles.expSoonText}>Recent auctions</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('auctions')}>
+                            <Text style={[styles.expSoonText,{color:theme.colors.dullRed1}]}>all auctions</Text>
+                        </TouchableOpacity>
+                    </View>
                     
                     <View>
                         <FlatList

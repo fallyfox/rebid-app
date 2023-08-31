@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { TextInput,Button } from 'react-native-paper';
 import { Formik } from 'formik';
-import { theme } from '../config/theme';
 import * as yup from 'yup';
+import { theme } from '../config/theme';
 import { authentication } from '../config/firebase.config';
 import { createUserWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
 import { db } from '../config/firebase.config';
