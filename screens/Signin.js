@@ -15,7 +15,7 @@ import { Formik } from 'formik';
 import { theme } from '../config/theme';
 import * as yup from 'yup';
 import { authentication } from '../config/firebase.config';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
 
 const schema = yup.object().shape({
     email:yup.string().min(8).max(60).required(),
@@ -26,7 +26,12 @@ export function Signin({navigation}) {
 
     const handleSignin = async (email,pass) => {
         await signInWithEmailAndPassword(authentication,email,pass)
-        .then(() => navigation.navigate('my-home'))
+        .then(() => {
+            onAuthStateChanged(authentication,(user) => {
+                console.log(user);
+            })
+            navigation.navigate('my-home');
+        })
         .catch((e) => Alert.alert(
             'Status Report',
             'An error has occured!',

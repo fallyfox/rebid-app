@@ -17,11 +17,12 @@ import { getDoc,doc } from 'firebase/firestore';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faGavel } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { ScreenLoaderIndicator } from '../utilities/screen-loader-indicator';
 
 const userUID = 'MqFcmcotWvRoTtHd1s91lR81yi13';//REMEMBER TO UPDATE AND DELETE
 
 export function Profile({navigation}) {
-    const [user,setUser] = useState({});
+    const [user,setUser] = useState(null);
 
     // GET A SINGLE DOCUMENT
     const getUser = async () => {
@@ -31,6 +32,8 @@ export function Profile({navigation}) {
     getUser();//Call function to 
 
     return (
+        user !== null
+        ?
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
             <View style={styles.container}>
@@ -102,6 +105,8 @@ export function Profile({navigation}) {
                 </View>
             </View>    
         </SafeAreaView>
+        :
+        <ScreenLoaderIndicator/>
     )
 }
 
