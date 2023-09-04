@@ -1,10 +1,10 @@
-import { StackNavigation } from "./screens/stack-navigation";
-import { NavigationContainer } from "@react-navigation/native";
+import { AppProvider } from "./config/app-context";
+import { AppNav } from "./screens/AppNav";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <StackNavigation/>
-    </NavigationContainer>
+    <AppProvider>
+      <AppNav/>
+    </AppProvider>
   )
 }

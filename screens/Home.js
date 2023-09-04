@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { AppContext } from "../config/app-context";
 import { 
     View,
     Text,
@@ -24,11 +26,15 @@ import { Ionicons } from "@expo/vector-icons";
 const Tab = createBottomTabNavigator();
 
 function MyHome({navigation}) {
+    const {logout} = useContext(AppContext);
 
     return (
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
                 <View style={styles.header}>
+                    <TouchableOpacity onPress={logout}>
+                        <Text>Try logout</Text>
+                    </TouchableOpacity>
                     <Text style={styles.brandName}>Rebid</Text>
                 </View>
 
@@ -161,6 +167,9 @@ const styles = StyleSheet.create({
     },
     header:{
         flex:0.5,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
     },
     brandName:{
         fontSize:42,

@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { AppContext } from "../config/app-context";
 import { 
     View,
     Text,
@@ -26,6 +28,8 @@ const schema = yup.object().shape({
 const userUID = 'MqFcmcotWvRoTtHd1s91lR81yi13';//REMEMBER TO UPDATE AND DELETE
 
 export function Sell({navigation}) {
+    const {UID} = useContext(AppContext);
+    console.log('context >>>',UID);
 
     const handleCreateAuction = async (title,description,initialPrice,bidIncrement,photoUrl,endDate) => {
         await addDoc(collection(db,'auctions'),{
