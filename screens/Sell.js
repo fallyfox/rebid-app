@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { 
     View,
     Text,
@@ -6,6 +7,7 @@ import {
     StyleSheet,
     StatusBar,
     Platform,
+    TouchableOpacity,
 } from 'react-native';
 import { TextInput,Button } from 'react-native-paper';
 import { theme } from '../config/theme';
@@ -13,6 +15,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { db } from '../config/firebase.config';
 import { addDoc,collection } from 'firebase/firestore';
+import { categories } from '../assets/categories';
 
 const schema = yup.object().shape({
     title:yup.string().min(16).max(60).required(),
@@ -26,14 +29,23 @@ const schema = yup.object().shape({
 const userUID = 'MqFcmcotWvRoTtHd1s91lR81yi13';//REMEMBER TO UPDATE AND DELETE
 
 export function Sell({navigation}) {
+    const [categorySelected,setCategorySelected] = useState(null);
 
-    const handleCreateAuction = async (title,description,initialPrice,bidIncrement,photoUrl,endDate) => {
+    const handleCreateAuction = async (
+        title,
+        description,
+        initialPrice,
+        bidIncrement,
+        photoUrl,
+        endDate) => {
         await addDoc(collection(db,'auctions'),{
             title:title,
             description:description,
             initialPrice:initialPrice,
             bidIncrement:bidIncrement,
             photoUrl:photoUrl,
+            category:categorySelected,
+            createdBy:userUID,
             endDate:endDate,
             createdAt:new Date().getTime(),
         })
@@ -57,7 +69,13 @@ export function Sell({navigation}) {
     return (
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
-            <View style={styles.form}>
+
+                <Text style={{
+                    color:theme.colors.navy,
+                    fontSize:22,
+                }}>Create a live auction</Text>
+
+                <View style={styles.form}>
                     <Formik
                         initialValues={{
                             title:'',
@@ -148,6 +166,31 @@ export function Sell({navigation}) {
                                 {errors.endDate && touched.endDate 
                                 ? <Text style={styles.errorText}>{errors.endDate}</Text> 
                                 : null}
+                            </View>
+
+                            <View style={{
+                                flexDirection:'row',
+                                flexWrap:'wrap',
+                                gap:8,
+                                paddingVertical:16
+                                }}>
+                                {
+                                    categories.map(cat => (
+                                        <TouchableOpacity 
+                                        key={cat.id}
+                                        style={{
+                                            backgroundColor:theme.colors.navy,
+                                            minWidth:84,
+                                            paddingVertical:12,
+                                            paddingHorizontal:8,
+                                            borderRadius:50,
+                                        }}
+                                        onPress={() => setCategorySelected(cat.title.toLowerCase())}>
+                                            <Text
+                                            style={{color:'white',textAlign:'center'}}>{cat.title}</Text>
+                                        </TouchableOpacity>
+                                    ))
+                                }
                             </View>
 
                             <Button 
