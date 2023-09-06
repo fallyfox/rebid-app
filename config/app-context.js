@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const AppContext = createContext();
 
 const AppProvider = ({children}) => {
-    const [UID,setUID] = useState(null);
+    const [user,setUser] = useState(null);
     const [userToken,setUserToken] = useState(null);
     const [isLoading,setIsLoading] = useState(false); 
 
@@ -20,10 +20,10 @@ const AppProvider = ({children}) => {
     const isLoggedIn = async () => {
         try {
             setIsLoading(true);
-            let userToken = AsyncStorage.getItem('userToken');
-            let uid = AsyncStorage.getItem('uid');
+            let userToken = await AsyncStorage.getItem('userToken');
+            let user = await AsyncStorage.getItem('user');
             setUserToken(userToken);
-            setUID(uid);
+            setUser(user);
             setIsLoading(false);
         } catch (error) {
             Alert.alert(
@@ -42,7 +42,7 @@ const AppProvider = ({children}) => {
     },[])
 
     return (
-        <AppContext.Provider value={{UID,setUID,userToken,setUserToken,isLoading,setIsLoading,logout}}>
+        <AppContext.Provider value={{user,setUser,userToken,setUserToken,isLoading,setIsLoading,logout}}>
             {children}
         </AppContext.Provider>
     )

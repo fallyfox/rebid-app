@@ -28,7 +28,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Tab = createBottomTabNavigator();
 
 function MyHome({navigation}) {
-    const { userToken,logout,UID } = useContext(AppContext);
+    const { userToken,logout } = useContext(AppContext);
 
     // AUTHORIZATION
     const checkUserToken = async () => {

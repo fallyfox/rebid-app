@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useContext,useState } from "react";
+import { AppContext } from "../config/app-context";
 import { 
     View,
     Text,
@@ -19,20 +20,20 @@ import { faGavel } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { ScreenLoaderIndicator } from '../utilities/screen-loader-indicator';
 
-const userUID = 'MqFcmcotWvRoTtHd1s91lR81yi13';//REMEMBER TO UPDATE AND DELETE
-
-export function Profile({navigation}) {
-    const [user,setUser] = useState(null);
+export function Profile() {
+    const { user } = useContext(AppContext);
+    const [userDetails,setUserDetails] = useState(null);
 
     // GET A SINGLE DOCUMENT
     const getUser = async () => {
-       const onSnap = await getDoc(doc(db,'users',userUID));
-       setUser(onSnap.data());
+        
+        const onSnap = await getDoc(doc(db,'users',JSON.parse(user).user_uid));
+        setUserDetails(onSnap.data());
     }
     getUser();//Call function to 
 
     return (
-        user !== null
+        userDetails !== null
         ?
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
@@ -58,7 +59,7 @@ export function Profile({navigation}) {
                                 width={80}
                                 alt='user photo' />
                             <FontAwesomeIcon style={styles.uploadIcon} icon={faGavel} color={theme.colors.dullRed0} />
-                            <Text style={styles.title}>{user.firstName + ' ' + user.lastName}</Text>
+                            <Text style={styles.title}>{userDetails.firstName + ' ' + userDetails.lastName}</Text>
                         </View>
                         {/* </ImageBackground> */}
 

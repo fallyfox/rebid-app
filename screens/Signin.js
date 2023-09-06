@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authentication } from '../config/firebase.config';
 import { signInWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
 import { ScreenLoaderIndicator } from '../utilities/screen-loader-indicator';
+import { generateAlphaNumChars } from '../utilities/generate-alpha-num-chars';
 
 const schema = yup.object().shape({
     email:yup.string().min(8).max(60).required(),
@@ -25,7 +26,7 @@ const schema = yup.object().shape({
 });
 
 export function Signin({navigation}) {
-    const { isLoading,setIsLoading,userToken,setUserToken,setUID,UID } = useContext(AppContext);
+    const { isLoading,setIsLoading,userToken,setUserToken,setUser,user } = useContext(AppContext);
 
     // AUTHORIZATION
     const checkUserToken = async () => {
@@ -49,10 +50,16 @@ export function Signin({navigation}) {
         await signInWithEmailAndPassword(authentication,email,pass)
         .then(() => {
             onAuthStateChanged(authentication, async (user) => {
-                setUID(user.uid);
-                setUserToken('t07464ettyeewttwqt442tt');
-                await AsyncStorage.setItem('userToken',JSON.stringify(userToken));
-                await AsyncStorage.setItem('uid',JSON.stringify(UID));
+                let token_ = generateAlphaNumChars(36);
+                let dataForStorage = {
+                    token:token_,
+                    user_uid:user.uid
+                }
+
+                setUser(user.uid);
+                setUserToken(token_);
+                await AsyncStorage.setItem('userToken',JSON.stringify(token_));
+                await AsyncStorage.setItem('user',JSON.stringify(dataForStorage));
 
                 setIsLoading(false);
             })
