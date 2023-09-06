@@ -44,11 +44,11 @@ export function CreateAccount({navigation}) {
                 res 
                 ?
                 Alert.alert(
-                    'Status Report',
-                    'Your account was created successfuly',
+                    'Report',
+                    'Success! You can now sign in to your new account',
                     [{
                         text:'Proceed',
-                        onPress:() => navigation.navigate('my-home')
+                        onPress:() => navigation.navigate('signin')
                     }]
                 )
                 : (e) => console.log('auth successfull BUT failed to write to firestore',e)

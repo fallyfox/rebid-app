@@ -1,8 +1,6 @@
 import { useState,createContext,useEffect } from "react";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { authentication } from "./firebase.config";
-import { signInWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
 
 const AppContext = createContext();
 
@@ -11,26 +9,11 @@ const AppProvider = ({children}) => {
     const [userToken,setUserToken] = useState(null);
     const [isLoading,setIsLoading] = useState(false); 
 
-    const login = async (email,pass) => {
-        setIsLoading(true);
-
-        await signInWithEmailAndPassword(authentication,email,pass)
-        .then(() => {
-            onAuthStateChanged(authentication, async (user) => {
-                setUID(user.uid);
-                setUserToken('t07464ettyeewttwqt442tt');
-                await AsyncStorage.setItem('userToken',String(userToken));
-
-                setIsLoading(false);
-            })
-        })
-        .catch(e => console.error(e))
-    }
-
     const logout = () => {
         setIsLoading(true);
         setUserToken(null);
         AsyncStorage.removeItem('userToken');
+        AsyncStorage.removeItem('uid');
         setIsLoading(false);
     }
 
@@ -38,12 +21,14 @@ const AppProvider = ({children}) => {
         try {
             setIsLoading(true);
             let userToken = AsyncStorage.getItem('userToken');
+            let uid = AsyncStorage.getItem('uid');
             setUserToken(userToken);
+            setUID(uid);
             setIsLoading(false);
         } catch (error) {
             Alert.alert(
                 'Error handling',
-                'An error has occured!',
+                'An error has occured! @ context',
                 [{
                     text:'Dismiss',
                     onPress:console.error(error)
@@ -57,7 +42,7 @@ const AppProvider = ({children}) => {
     },[])
 
     return (
-        <AppContext.Provider value={{UID,userToken,isLoading,login,logout}}>
+        <AppContext.Provider value={{UID,setUID,userToken,setUserToken,isLoading,setIsLoading,logout}}>
             {children}
         </AppContext.Provider>
     )

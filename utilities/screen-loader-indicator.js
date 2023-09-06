@@ -14,7 +14,7 @@ export function ScreenLoaderIndicator() {
 const styles = StyleSheet.create({
     wrapper:{
         flex:1,
-        backgroundColor:theme.colors.dullRed0,
+        backgroundColor:'white',
         marginTop:Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
 })

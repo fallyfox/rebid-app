@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext,useEffect } from 'react';
 import { AppContext } from '../config/app-context';
 import { 
     View,
@@ -15,6 +15,9 @@ import { Formik } from 'formik';
 import { theme } from '../config/theme';
 import * as yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authentication } from '../config/firebase.config';
+import { signInWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
+import { ScreenLoaderIndicator } from '../utilities/screen-loader-indicator';
 
 const schema = yup.object().shape({
     email:yup.string().min(8).max(60).required(),
@@ -22,20 +25,46 @@ const schema = yup.object().shape({
 });
 
 export function Signin({navigation}) {
-    const {login} = useContext(AppContext);
+    const { isLoading,setIsLoading,userToken,setUserToken,setUID,UID } = useContext(AppContext);
 
-
-    const getAsyncData = async () => {
+    // AUTHORIZATION
+    const checkUserToken = async () => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            console.log(token);
+            token ? navigation.navigate('my-home') : null;
         } catch (error) {
-            console.error('----------',error);
+            Alert.alert('Error','problem fetching authorization token');
+            console.error(error);
         }
     }
-    getAsyncData()
+
+    useEffect(() => {
+        checkUserToken();
+    },[userToken]);
+    //AUTHORIZATION
+
+    const login = async (email,pass) => {
+        setIsLoading(true);
+
+        await signInWithEmailAndPassword(authentication,email,pass)
+        .then(() => {
+            onAuthStateChanged(authentication, async (user) => {
+                setUID(user.uid);
+                setUserToken('t07464ettyeewttwqt442tt');
+                await AsyncStorage.setItem('userToken',JSON.stringify(userToken));
+                await AsyncStorage.setItem('uid',JSON.stringify(UID));
+
+                setIsLoading(false);
+            })
+        })
+        .catch(e => console.error(e))
+    }
 
     return (
+        isLoading 
+        ?
+        <ScreenLoaderIndicator/>
+        :
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
                 <Text style={styles.brandName}>Rebid</Text>

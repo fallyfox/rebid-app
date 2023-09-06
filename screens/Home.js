@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext,useEffect } from "react";
 import { AppContext } from "../config/app-context";
 import { 
     View,
@@ -9,7 +9,8 @@ import {
     StatusBar,
     TouchableOpacity,
     Image,
-    FlatList
+    FlatList,
+    Alert
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { theme } from '../config/theme';
@@ -22,11 +23,27 @@ import { History } from './History';
 import { Profile } from './Profile';
 import { MyBids } from './MyBids';
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 
 function MyHome({navigation}) {
-    const {logout} = useContext(AppContext);
+    const { userToken,logout,UID } = useContext(AppContext);
+
+    // AUTHORIZATION
+    const checkUserToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            !token ? navigation.navigate('signin') : null;
+        } catch (error) {
+            Alert.alert('Error','problem fetching authorization token @ home');
+        }
+    }
+
+    useEffect(() => {
+        checkUserToken();
+    },[userToken]);
+    //AUTHORIZATION
 
     return (
         <SafeAreaView style={styles.wrapper}>

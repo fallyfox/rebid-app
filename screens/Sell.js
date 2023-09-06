@@ -17,7 +17,6 @@ import * as yup from 'yup';
 import { db } from '../config/firebase.config';
 import { addDoc,collection } from 'firebase/firestore';
 import { categories } from '../assets/categories';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const schema = yup.object().shape({
     title:yup.string().min(16).max(60).required(),
@@ -31,19 +30,6 @@ const schema = yup.object().shape({
 export function Sell({navigation}) {
     const {UID} = useContext(AppContext);
     const [categorySelected,setCategorySelected] = useState(null);
-
-
-    const getAsyncData = async () => {
-        try {
-            const token = await AsyncStorage.getItem('userToken');
-            console.log(token);
-        } catch (error) {
-            console.error('----------',error);
-        }
-    }
-    getAsyncData()
-
-
 
     const handleCreateAuction = async (
         title,

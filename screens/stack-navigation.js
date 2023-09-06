@@ -7,16 +7,16 @@ import { Auctions } from "./Auctions";
 
 const Stack = createNativeStackNavigator();
 
-export function StackNavigation({initRoute}) {
+export function StackNavigation() {
     return (
         <Stack.Navigator 
-        initialRouteName={initRoute}
+        initialRouteName="signin"
         screenOptions={{headerShown:false}}>
             <Stack.Screen name="my-home" component={Home}/>
             <Stack.Screen name="starter" component={Starter}/>
             <Stack.Screen name="create-account" component={CreateAccount}/>
             <Stack.Screen name="signin" component={Signin}/>
-            <Stack.Screen name="auctions" component={Auctions}/>
+            <Stack.Screen name="auctions" component={Auctions} options={{headerShown:true}}/>
         </Stack.Navigator>
     )
 }
