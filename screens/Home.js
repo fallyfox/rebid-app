@@ -151,7 +151,6 @@ export function Home() {
             <Tab.Screen name='Bids' component={MyBids} options={{headerShown:false}}/>
             <Tab.Screen name='History' component={History} options={{headerShown:false}}/>
             <Tab.Screen name='Profile' component={Profile} options={{headerShown:false}}/>
-           
         </Tab.Navigator>
     )
 }

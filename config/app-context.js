@@ -16,21 +16,15 @@ const AppProvider = ({children}) => {
 
         await signInWithEmailAndPassword(authentication,email,pass)
         .then(() => {
-            onAuthStateChanged(authentication,(user) => {
-                setUserToken(`${Math.round(Math.random() * 10)}`);
-                AsyncStorage.setItem('userToken',userToken);
+            onAuthStateChanged(authentication, async (user) => {
+                setUID(user.uid);
+                setUserToken('t07464ettyeewttwqt442tt');
+                await AsyncStorage.setItem('userToken',String(userToken));
+
+                setIsLoading(false);
             })
         })
-        .catch((e) => Alert.alert(
-            'Status Report',
-            'An error has occured!',
-            [{
-                text:'Dismiss',
-                onPress:console.error(e)
-            }]
-        ))
-
-        setIsLoading(false);
+        .catch(e => console.error(e))
     }
 
     const logout = () => {

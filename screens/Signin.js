@@ -14,6 +14,7 @@ import { TextInput,Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import { theme } from '../config/theme';
 import * as yup from 'yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const schema = yup.object().shape({
     email:yup.string().min(8).max(60).required(),
@@ -22,6 +23,17 @@ const schema = yup.object().shape({
 
 export function Signin({navigation}) {
     const {login} = useContext(AppContext);
+
+
+    const getAsyncData = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            console.log(token);
+        } catch (error) {
+            console.error('----------',error);
+        }
+    }
+    getAsyncData()
 
     return (
         <SafeAreaView style={styles.wrapper}>

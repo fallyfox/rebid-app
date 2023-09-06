@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState,useContext } from 'react';
+import { AppContext } from '../config/app-context';
 import { 
     View,
     Text,
@@ -16,6 +17,7 @@ import * as yup from 'yup';
 import { db } from '../config/firebase.config';
 import { addDoc,collection } from 'firebase/firestore';
 import { categories } from '../assets/categories';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const schema = yup.object().shape({
     title:yup.string().min(16).max(60).required(),
@@ -26,10 +28,22 @@ const schema = yup.object().shape({
     endDate:yup.string().required(),
 });
 
-const userUID = 'MqFcmcotWvRoTtHd1s91lR81yi13';//REMEMBER TO UPDATE AND DELETE
-
 export function Sell({navigation}) {
+    const {UID} = useContext(AppContext);
     const [categorySelected,setCategorySelected] = useState(null);
+
+
+    const getAsyncData = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            console.log(token);
+        } catch (error) {
+            console.error('----------',error);
+        }
+    }
+    getAsyncData()
+
+
 
     const handleCreateAuction = async (
         title,
@@ -41,11 +55,11 @@ export function Sell({navigation}) {
         await addDoc(collection(db,'auctions'),{
             title:title,
             description:description,
-            initialPrice:initialPrice,
-            bidIncrement:bidIncrement,
+            initialPrice:Number(initialPrice),
+            bidIncrement:Number(bidIncrement),
             photoUrl:photoUrl,
             category:categorySelected,
-            createdBy:userUID,
+            createdBy:UID,
             endDate:endDate,
             createdAt:new Date().getTime(),
         })
@@ -169,10 +183,19 @@ export function Sell({navigation}) {
                             </View>
 
                             <View style={{
+                                backgroundColor:theme.colors.dullRed1,
+                                padding:8,
+                                borderRadius:8,
+                                display:categorySelected ? 'flex' : 'none',
+                            }}>
+                                <Text style={{color:'white'}}>Category: {categorySelected}</Text>
+                            </View>
+
+                            <View style={{
                                 flexDirection:'row',
                                 flexWrap:'wrap',
                                 gap:8,
-                                paddingVertical:16
+                                paddingVertical:8
                                 }}>
                                 {
                                     categories.map(cat => (
