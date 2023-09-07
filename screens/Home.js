@@ -1,4 +1,4 @@
-import { useContext,useEffect } from "react";
+import { useContext,useEffect, useState } from "react";
 import { AppContext } from "../config/app-context";
 import { 
     View,
@@ -24,11 +24,30 @@ import { Profile } from './Profile';
 import { MyBids } from './MyBids';
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getDocs,collection,orderBy,query } from "firebase/firestore";
+import { db } from "../config/firebase.config";
+import { ScreenLoaderIndicator } from "../utilities/screen-loader-indicator";
 
 const Tab = createBottomTabNavigator();
 
 function MyHome({navigation}) {
     const { userToken,logout } = useContext(AppContext);
+    const [auctions,setAuctions] = useState([]);
+    
+
+    const getAuctions = async () => {
+        const q = query(collection(db,'auctions'),orderBy('createdAt','desc'));
+        const onSnap = await getDocs(q);
+        setAuctions(onSnap.docs.map(doc => {
+            return {
+                id:doc.id,
+                data:{
+                    ...doc.data()
+                }
+            }
+        }))
+    }
+    getAuctions();
 
     // AUTHORIZATION
     const checkUserToken = async () => {
@@ -46,6 +65,10 @@ function MyHome({navigation}) {
     //AUTHORIZATION
 
     return (
+        auctions.length < 1
+        ?
+        <ScreenLoaderIndicator/>
+        :
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -109,9 +132,10 @@ function MyHome({navigation}) {
                         </TouchableOpacity>
                     </View>
                     
+                    {/* recent auctions */}
                     <View>
                         <FlatList
-                        data={demoProducts}
+                        data={auctions}
                         renderItem={({item}) => (
                             <TouchableOpacity 
                             style={[
@@ -120,11 +144,20 @@ function MyHome({navigation}) {
                                 ]}>
                                 <Image
                                 style={styles.productImg}
-                                source={{uri:item.imageUr}}/>
+                                source={{uri:item.data.photoUrl}}/>
                                 <View style={styles.expItemsDetailsBlk}>
-                                    <Text style={{fontSize:12,color:theme.colors.dullRed0}}>Ending in 1d 5hrs 32min 44secs</Text>
-                                    <Text style={{fontSize:16,color:theme.colors.dullRed1}}>{item.title.length > 24 ? item.title.slice(0,24)+'...' : item.title}</Text>
-                                    <Text style={{fontSize:20,fontWeight:'600',color:theme.colors.dullRed1}}>₦{CommaSepNum(item.currentBid)}</Text>
+                                    <Text style={{fontSize:12,color:theme.colors.dullRed0}}>
+                                        Ending in 1d 5hrs 32min 44secs
+                                    </Text>
+                                    <Text style={{fontSize:16,color:theme.colors.dullRed1}}>
+                                        {item.data.title.length > 30 ? item.data.title.slice(0,30)+'...' : item.title}
+                                    </Text>
+                                    <Text style={{fontSize:20,fontWeight:'600',color:theme.colors.dullRed1}}>
+                                        Initial price: ₦{CommaSepNum(item.data.initialPrice)}
+                                    </Text>
+                                    <Text style={{fontSize:20,fontWeight:'600',color:theme.colors.dullRed1}}>
+                                        Bid increment: ₦{CommaSepNum(item.data.bidIncrement)}
+                                    </Text>
                                 </View>
                             </TouchableOpacity>
                         )}

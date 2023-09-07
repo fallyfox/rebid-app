@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import { 
     View,
     Text,
@@ -16,6 +17,7 @@ import { authentication } from '../config/firebase.config';
 import { createUserWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
 import { db } from '../config/firebase.config';
 import { setDoc,doc } from 'firebase/firestore';
+import { ScreenLoaderIndicator } from '../utilities/screen-loader-indicator';
 
 const schema = yup.object().shape({
     fName:yup.string().min(3).required(),
@@ -27,8 +29,11 @@ const schema = yup.object().shape({
 });
 
 export function CreateAccount({navigation}) {
+    const [showScreenLoader,setShowScreenLoader] = useState(false);
 
     const handleCreateAccount = async (email,pass,fName,lName) => {
+        setShowScreenLoader(true);
+
         await createUserWithEmailAndPassword(authentication,email,pass)
         .then(() => {            
             onAuthStateChanged(authentication,(user) => {
@@ -40,6 +45,8 @@ export function CreateAccount({navigation}) {
                     email:email,
                     createdAt:new Date().getTime(),
                 });
+
+                setShowScreenLoader(false);
 
                 res 
                 ?
@@ -65,6 +72,10 @@ export function CreateAccount({navigation}) {
     }
 
     return (
+        showScreenLoader
+        ?
+        <ScreenLoaderIndicator/>
+        :
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
                 <Text style={styles.brandName}>Rebid</Text>
