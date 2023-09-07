@@ -27,6 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDocs,collection,orderBy,query } from "firebase/firestore";
 import { db } from "../config/firebase.config";
 import { ScreenLoaderIndicator } from "../utilities/screen-loader-indicator";
+import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -73,7 +74,7 @@ function MyHome({navigation}) {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={logout}>
-                        <Text>Try logout</Text>
+                        <FontAwesomeIcon icon={faSignOut} color={theme.colors.navy} size={30}/>
                     </TouchableOpacity>
                     <Text style={styles.brandName}>Rebid</Text>
                 </View>
