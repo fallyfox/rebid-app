@@ -4,6 +4,7 @@ import { Home } from "./Home";
 import { CreateAccount } from "./CreateAccount";
 import { Signin } from "./Signin";
 import { Auctions } from "./Auctions";
+import { MyAuctions } from "./MyAuctions";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,7 @@ export function StackNavigation() {
             <Stack.Screen name="create-account" component={CreateAccount}/>
             <Stack.Screen name="signin" component={Signin}/>
             <Stack.Screen name="auctions" component={Auctions} options={{headerShown:true}}/>
+            <Stack.Screen name="myauctions" component={MyAuctions} options={{headerShown:true}}/>
         </Stack.Navigator>
     )
 }

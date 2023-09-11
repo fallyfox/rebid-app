@@ -34,8 +34,8 @@ const Tab = createBottomTabNavigator();
 function MyHome({navigation}) {
     const { userToken,logout } = useContext(AppContext);
     const [auctions,setAuctions] = useState([]);
+    const [expiringSoon,setExpiringSoon] = useState([]);
     
-
     const getAuctions = async () => {
         const q = query(collection(db,'auctions'),orderBy('createdAt','desc'));
         const onSnap = await getDocs(q);
@@ -49,6 +49,18 @@ function MyHome({navigation}) {
         }))
     }
     getAuctions();
+
+    // sort existing auctions by endDate
+    useEffect(() => {
+        const sortedAuctions = auctions.sort((a,b) => {
+            const previousDate = new Date(a.data.endDate).getTime();
+            const currentDate = new Date(b.data.endDate).getTime();
+    
+            return currentDate - previousDate
+        });
+        setExpiringSoon(sortedAuctions);
+        console.log('expiring soon ++++',expiringSoon);
+    },[auctions])
 
     // AUTHORIZATION
     const checkUserToken = async () => {
