@@ -26,7 +26,6 @@ export function Profile({navigation}) {
 
     // GET A SINGLE DOCUMENT
     const getUser = async () => {
-        
         const onSnap = await getDoc(doc(db,'users',JSON.parse(user).user_uid));
         setUserDetails(onSnap.data());
     }

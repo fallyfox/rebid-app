@@ -15,6 +15,7 @@ import { db } from '../config/firebase.config';
 import { getDocs,collection } from 'firebase/firestore';
 import { CommaSepNum } from '../utilities/comma-sep-num';
 import { ScreenLoaderIndicator } from '../utilities/screen-loader-indicator';
+import { getRemainingTime } from '../utilities/time-remaining';
 
 export function Auctions({navigation}) {
     const [auctions,setAuctions] = React.useState([]);
@@ -50,7 +51,7 @@ export function Auctions({navigation}) {
                             style={styles.productImg}
                             source={{uri:item.data.photoUrl}}/>
                             <View style={styles.expItemsDetailsBlk}>
-                                <Text style={{fontSize:12,color:theme.colors.dullRed0}}>Ending in 1d 5hrs 32min 44secs</Text>
+                                <Text style={{fontSize:12,color:theme.colors.dullRed0}}>{getRemainingTime(item.data.endDate)}</Text>
                                 <Text style={{fontSize:16,color:theme.colors.dullRed1}}>{item.data.title.length > 24 ? item.data.title.slice(0,24)+'...' : item.data.title}</Text>
                                 <Text style={{fontSize:20,fontWeight:'600',color:theme.colors.dullRed1}}>₦{CommaSepNum(item.data.initialPrice)}</Text>
                             </View>

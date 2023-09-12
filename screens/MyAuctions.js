@@ -3,6 +3,8 @@ import { View,StyleSheet,TouchableOpacity,Text,StatusBar,Platform,SafeAreaView }
 import { db } from "../config/firebase.config";
 import { getDocs,collection,query,where,orderBy } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faTrash,faPen } from "@fortawesome/free-solid-svg-icons";
 
 export function MyAuctions() {
     const [myAuctions,setMyAuctions] = useState([]);
@@ -33,7 +35,11 @@ export function MyAuctions() {
     return (
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
+                <Text style={styles.heading}>Auctions I created</Text>
 
+                <View>
+                    
+                </View>
             </View>
         </SafeAreaView>
     )
@@ -42,11 +48,13 @@ export function MyAuctions() {
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
-        backgroundColor: "rgba(238,226,222,0.5)",
         marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     container: {
         flex: 1,
         paddingHorizontal: 8,
     },
+    heading:{
+        fontSize:22
+    }
 })

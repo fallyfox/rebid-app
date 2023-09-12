@@ -28,6 +28,7 @@ import { getDocs,collection,orderBy,query } from "firebase/firestore";
 import { db } from "../config/firebase.config";
 import { ScreenLoaderIndicator } from "../utilities/screen-loader-indicator";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
+import { getRemainingTime } from "../utilities/time-remaining";
 
 const Tab = createBottomTabNavigator();
 
@@ -52,15 +53,14 @@ function MyHome({navigation}) {
 
     // sort existing auctions by endDate
     useEffect(() => {
-        const sortedAuctions = auctions.sort((a,b) => {
+            const sortedAuctions = auctions.sort((a,b) => {
             const previousDate = new Date(a.data.endDate).getTime();
             const currentDate = new Date(b.data.endDate).getTime();
     
             return currentDate - previousDate
         });
         setExpiringSoon(sortedAuctions);
-        console.log('expiring soon ++++',expiringSoon);
-    },[auctions])
+    },[])
 
     // AUTHORIZATION
     const checkUserToken = async () => {
@@ -114,7 +114,7 @@ function MyHome({navigation}) {
                     
                     <View>
                         <FlatList
-                        data={demoProducts}
+                        data={expiringSoon}
                         renderItem={({item}) => (
                             <TouchableOpacity 
                             style={[
@@ -123,11 +123,11 @@ function MyHome({navigation}) {
                                 ]}>
                                 <Image
                                 style={styles.productImg}
-                                source={{uri:item.imageUr}}/>
+                                source={{uri:item.data.photoUrl}}/>
                                 <View style={styles.expItemsDetailsBlk}>
-                                    <Text style={{fontSize:12}}>Ending in 1d 5hrs 32min 44secs</Text>
-                                    <Text style={{fontSize:16}}>{item.title.length > 24 ? item.title.slice(0,24)+'...' : item.title}</Text>
-                                    <Text style={{fontSize:20,fontWeight:'600'}}>₦{CommaSepNum(item.currentBid)}</Text>
+                                    <Text style={{fontSize:12}}>{getRemainingTime(new Date(item.data.endDate).getTime())}</Text>
+                                    <Text style={{fontSize:16}}>{item.data.title.length > 24 ? item.data.title.slice(0,24)+'...' : item.data.title}</Text>
+                                    <Text style={{fontSize:20,fontWeight:'600'}}>₦{CommaSepNum(item.data.initialPrice)}</Text>
                                 </View>
                             </TouchableOpacity>
                         )}
@@ -149,7 +149,10 @@ function MyHome({navigation}) {
                     <View>
                         <FlatList
                         data={auctions}
-                        renderItem={({item}) => (
+                        renderItem={({item}) => {
+                            
+
+                            return (
                             <TouchableOpacity 
                             style={[
                                 styles.expItem,
@@ -160,7 +163,7 @@ function MyHome({navigation}) {
                                 source={{uri:item.data.photoUrl}}/>
                                 <View style={styles.expItemsDetailsBlk}>
                                     <Text style={{fontSize:12,color:theme.colors.dullRed0}}>
-                                        Ending in 1d 5hrs 32min 44secs
+                                    {getRemainingTime(item.data.endDate)}
                                     </Text>
                                     <Text style={{fontSize:16,color:theme.colors.dullRed1}}>
                                         {item.data.title.length > 30 ? item.data.title.slice(0,30)+'...' : item.title}
@@ -173,7 +176,7 @@ function MyHome({navigation}) {
                                     </Text>
                                 </View>
                             </TouchableOpacity>
-                        )}
+                        )}}
                         horizontal={false}
                         showsHorizontalScrollIndicator={false}
                         key={({item}) => item.id}/>

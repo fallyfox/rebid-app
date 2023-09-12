@@ -162,7 +162,7 @@ export function Sell({navigation}) {
                                 value={values.endDate}
                                 onChangeText={handleChange('endDate')}
                                 onBlur={handleBlur('endDate')}
-                                placeholder='eg 29/08/2023'/>
+                                placeholder='eg MM/DD/YYYY'/>
                                 {errors.endDate && touched.endDate 
                                 ? <Text style={styles.errorText}>{errors.endDate}</Text> 
                                 : null}
