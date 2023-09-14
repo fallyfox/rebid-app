@@ -46,7 +46,7 @@ export function Sell({navigation}) {
             photoUrl:photoUrl,
             category:categorySelected,
             createdBy:UID,
-            endDate:endDate,
+            endDate:new Date(endDate).getTime(),
             createdAt:new Date().getTime(),
         })
         .then(() => Alert.alert(
