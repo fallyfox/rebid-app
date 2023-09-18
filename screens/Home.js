@@ -50,7 +50,10 @@ function MyHome({navigation}) {
             }
         }))
     }
-    getAuctions();
+    
+    useEffect(() => {
+        getAuctions()
+    },[])
 
     // sort existing auctions by endDate
     useEffect(() => {
@@ -118,6 +121,7 @@ function MyHome({navigation}) {
                     <View>
                         <FlatList
                         data={expiringSoon}
+                        initialNumToRender={3}
                         renderItem={({item}) => (
                             <TouchableOpacity 
                             style={[
@@ -152,6 +156,7 @@ function MyHome({navigation}) {
                     <View>
                         <FlatList
                         data={auctions}
+                        initialNumToRender={3}
                         renderItem={({item}) => {
                             return (
                             <TouchableOpacity 

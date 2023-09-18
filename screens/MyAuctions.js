@@ -1,4 +1,4 @@
-import { useState,useContext } from "react";
+import { useState,useContext, useEffect } from "react";
 import { AppContext } from "../config/app-context";
 import { View,StyleSheet,TouchableOpacity,Image,FlatList,Text,StatusBar,Platform,SafeAreaView } from "react-native";
 import { db } from "../config/firebase.config";
@@ -29,7 +29,10 @@ export function MyAuctions() {
             }
         }))
     }
-    getMyAuctions()
+    
+    useEffect(() => {
+        getMyAuctions()
+    },[])
 
     return (
         <SafeAreaView style={styles.wrapper}>
@@ -39,6 +42,7 @@ export function MyAuctions() {
                 <View style={styles.myAuctionsBlock}>
                     <FlatList
                     data={myAuctions}
+                    initialNumToRender={10}
                     renderItem={({item}) => (
                         <View style={styles.auctionItem}>
                             <View style={styles.actionSection}>
