@@ -17,6 +17,7 @@ import * as yup from 'yup';
 import { db } from '../config/firebase.config';
 import { addDoc,collection } from 'firebase/firestore';
 import { categories } from '../assets/categories';
+import { ScreenLoaderIndicatorOpacity } from '../utilities/screen-loader-indicator-with-opacity';
 
 const schema = yup.object().shape({
     title:yup.string().min(16).max(60).required(),
@@ -30,14 +31,11 @@ const schema = yup.object().shape({
 export function Sell({navigation}) {
     const {user} = useContext(AppContext);
     const [categorySelected,setCategorySelected] = useState(null);
+    const [showLoader,setShowLoader] = useState(true);
 
-    const handleCreateAuction = async (
-        title,
-        description,
-        initialPrice,
-        bidIncrement,
-        photoUrl,
-        endDate) => {
+    const handleCreateAuction = async (title,description,initialPrice,bidIncrement,photoUrl,endDate) => {
+        setShowLoader(true);
+        
         await addDoc(collection(db,'auctions'),{
             title:title,
             description:description,
@@ -49,13 +47,17 @@ export function Sell({navigation}) {
             endDate:Number(endDate),
             createdAt:new Date().getTime(),
         })
-        .then(() => Alert.alert(
-            'Info',
-            'Your auction was created',
-            [{
-                text:'Dismiss',
-            }]
-        ))
+        .then(() => {
+            setShowLoader(false);
+
+            Alert.alert(
+                'Info',
+                'Your auction was created',
+                [{
+                    text:'Dismiss',
+                }]
+            )
+        })
         .catch((e) => Alert.alert(
             'Info',
             'An error has occured!',
@@ -67,6 +69,8 @@ export function Sell({navigation}) {
     }
 
     return (
+        <>
+        <ScreenLoaderIndicatorOpacity controlState={showLoader}/>
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
 
@@ -87,10 +91,9 @@ export function Sell({navigation}) {
                         }}
                         onSubmit={values => {
                             const dateToTStamp = new Date(`${values.endDate}`).getTime();
-                            console.log(typeof(values.endDate),values.endDate,dateToTStamp)
+                            console.log(typeof(values.endDate),values.endDate,dateToTStamp);//DELETE AFTER USE
                             handleCreateAuction(values.title,values.description,values.initialPrice,values.bidIncrement,values.photoUrl,dateToTStamp);
-                            }
-                        }
+                        }}
                         validationSchema={schema}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, touched,errors }) => (
@@ -211,6 +214,7 @@ export function Sell({navigation}) {
                 </View>
             </View>    
         </SafeAreaView>
+        </>
     )
 }
 
