@@ -28,7 +28,7 @@ const schema = yup.object().shape({
 });
 
 export function Sell({navigation}) {
-    const {UID} = useContext(AppContext);
+    const {user} = useContext(AppContext);
     const [categorySelected,setCategorySelected] = useState(null);
 
     const handleCreateAuction = async (
@@ -45,8 +45,8 @@ export function Sell({navigation}) {
             bidIncrement:Number(bidIncrement),
             photoUrl:photoUrl,
             category:categorySelected,
-            createdBy:UID,
-            endDate:new Date(endDate).getTime(),
+            createdBy:JSON.parse(user).user_uid,
+            endDate:Number(endDate),
             createdAt:new Date().getTime(),
         })
         .then(() => Alert.alert(
@@ -86,14 +86,11 @@ export function Sell({navigation}) {
                             endDate:''
                         }}
                         onSubmit={values => {
-                            handleCreateAuction(
-                                values.title,
-                                values.description,
-                                values.initialPrice,
-                                values.bidIncrement,
-                                values.photoUrl,
-                                values.endDate)
-                        }}
+                            const dateToTStamp = new Date(`${values.endDate}`).getTime();
+                            console.log(typeof(values.endDate),values.endDate,dateToTStamp)
+                            handleCreateAuction(values.title,values.description,values.initialPrice,values.bidIncrement,values.photoUrl,dateToTStamp);
+                            }
+                        }
                         validationSchema={schema}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, touched,errors }) => (

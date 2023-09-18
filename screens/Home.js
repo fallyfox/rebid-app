@@ -29,6 +29,7 @@ import { db } from "../config/firebase.config";
 import { ScreenLoaderIndicator } from "../utilities/screen-loader-indicator";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 import { getRemainingTime } from "../utilities/time-remaining";
+import { MyAuctions } from "./MyAuctions";
 
 const Tab = createBottomTabNavigator();
 
@@ -97,7 +98,9 @@ function MyHome({navigation}) {
                         <TouchableOpacity 
                         style={styles.catOption} 
                         key={cat.id}
-                        onPress={() => navigation.navigate('auctions')}>
+                        onPress={() => navigation.navigate('category',{
+                            category:cat.title
+                        })}>
                             <FontAwesomeIcon 
                             icon={cat.icon} 
                             size={40}
@@ -150,8 +153,6 @@ function MyHome({navigation}) {
                         <FlatList
                         data={auctions}
                         renderItem={({item}) => {
-                            
-
                             return (
                             <TouchableOpacity 
                             style={[
@@ -200,7 +201,7 @@ export function Home() {
                 iconName = focused ? 'ios-cart-sharp' : 'ios-cart-outline';
               } else if (route.name === 'Bids') {
                 iconName = focused ? 'hammer' : 'hammer-outline';
-              } else if (route.name === 'History') {
+              } else if (route.name === 'My auctions') {
                 iconName = focused ? 'md-file-tray-stacked' : 'ios-file-tray-stacked-outline';
               } else if (route.name === 'Profile') {
                 iconName = focused ? 'person-circle' : 'person-circle-outline';
@@ -215,7 +216,7 @@ export function Home() {
             <Tab.Screen name='Home' component={MyHome} options={{headerShown:false}} />
             <Tab.Screen name='Sell' component={Sell} options={{headerShown:false}} />
             <Tab.Screen name='Bids' component={MyBids} options={{headerShown:false}}/>
-            <Tab.Screen name='History' component={History} options={{headerShown:false}}/>
+            <Tab.Screen name='My auctions' component={MyAuctions} options={{headerShown:false}}/>
             <Tab.Screen name='Profile' component={Profile} options={{headerShown:false}}/>
         </Tab.Navigator>
     )
