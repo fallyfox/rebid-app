@@ -37,4 +37,3 @@ yarn-error.*
 #my ignores
 *.config.js
 *.config.ts
-MyAuctions.js

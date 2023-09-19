@@ -14,12 +14,10 @@ import {
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { theme } from '../config/theme';
-import { demoProducts } from '../assets/demo-products';
 import { categories } from "../assets/categories";
 import { CommaSepNum } from '../utilities/comma-sep-num';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Sell } from './Sell';
-import { History } from './History';
 import { Profile } from './Profile';
 import { MyBids } from './MyBids';
 import { Ionicons } from "@expo/vector-icons";

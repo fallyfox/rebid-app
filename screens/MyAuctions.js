@@ -10,7 +10,7 @@ import { getRemainingTime } from "../utilities/time-remaining";
 import { CommaSepNum } from "../utilities/comma-sep-num";
 import { ScreenLoaderIndicatorOpacity } from "../utilities/screen-loader-indicator-with-opacity";
 
-export function MyAuctions() {
+export function MyAuctions({navigation}) {
     const [myAuctions,setMyAuctions] = useState([]);
     const {user} = useContext(AppContext);
     const [showLoader,setShowLoader] = useState(false);
@@ -21,6 +21,7 @@ export function MyAuctions() {
             where('createdBy','==',JSON.parse(user).user_uid),
             orderBy('createdAt','desc')
             );
+            
         onSnapshot(q, onSnap => {
             const auctions = [];
             onSnap.forEach(doc => {
@@ -77,7 +78,12 @@ export function MyAuctions() {
                     renderItem={({item}) => (
                         <View style={styles.auctionItem}>
                             <View style={styles.actionSection}>
-                                <TouchableOpacity style={styles.actionCircle}>
+                                <TouchableOpacity 
+                                style={styles.actionCircle}
+                                onPress={() => navigation.navigate('update auction',{
+                                    docuid:item.id,
+                                    docData:item.data
+                                })}>
                                     <FontAwesomeIcon 
                                     icon={faPen} 
                                     size={24}

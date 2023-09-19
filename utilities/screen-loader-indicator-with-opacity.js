@@ -3,10 +3,15 @@ import { theme } from '../config/theme';
 
 export const ScreenLoaderIndicatorOpacity = ({controlState}) => {
     return (
-        <Modal animationType="slide" transparent={true} visible={controlState}>
+        <Modal 
+        animationType="slide" 
+        transparent={true} 
+        visible={controlState}>
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <ActivityIndicator size="large" color={theme.colors.navy} />
+                    <ActivityIndicator 
+                    size="large" 
+                    color={theme.colors.navy} />
                 </View>
             </View>
         </Modal>

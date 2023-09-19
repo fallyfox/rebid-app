@@ -1,5 +1,4 @@
-import { useState,useContext } from 'react';
-import { AppContext } from '../config/app-context';
+import { useState } from 'react';
 import { 
     View,
     Text,
@@ -15,7 +14,7 @@ import { theme } from '../config/theme';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { db } from '../config/firebase.config';
-import { addDoc,collection } from 'firebase/firestore';
+import { doc,updateDoc } from 'firebase/firestore';
 import { categories } from '../assets/categories';
 import { ScreenLoaderIndicatorOpacity } from '../utilities/screen-loader-indicator-with-opacity';
 
@@ -28,31 +27,29 @@ const schema = yup.object().shape({
     endDate:yup.string().required(),
 });
 
-export function Sell({navigation}) {
-    const {user} = useContext(AppContext);
-    const [categorySelected,setCategorySelected] = useState(null);
+export function UpdateAuction({navigation,route}) {
+    const {docuid,docData} = route.params;
+    const [categorySelected,setCategorySelected] = useState(docData.category);
     const [showLoader,setShowLoader] = useState(false);
 
-    const handleCreateAuction = async (title,description,initialPrice,bidIncrement,photoUrl,endDate) => {
+    console.log(docuid,docData);
+
+    const handleUpdateAuction = async (title,description,photoUrl,endDate) => {
         setShowLoader(true);
-        
-        await addDoc(collection(db,'auctions'),{
+
+        await updateDoc(doc(db,'auctions',docuid),{
             title:title,
             description:description,
-            initialPrice:Number(initialPrice),
-            bidIncrement:Number(bidIncrement),
             photoUrl:photoUrl,
             category:categorySelected,
-            createdBy:JSON.parse(user).user_uid,
-            endDate:Number(endDate),
-            createdAt:new Date().getTime(),
+            endDate:Number(endDate)
         })
         .then(() => {
             setShowLoader(false);
 
             Alert.alert(
                 'Info',
-                'Your auction was created',
+                'Your auction was update',
                 [{
                     text:'Dismiss',
                 }]
@@ -81,22 +78,19 @@ export function Sell({navigation}) {
                 <Text style={{
                     color:theme.colors.navy,
                     fontSize:22,
-                }}>Create a live auction</Text>
+                }}>Update your auction</Text>
 
                 <View style={styles.form}>
                     <Formik
                         initialValues={{
                             title:'',
                             description:'',
-                            initialPrice:'',
-                            bidIncrement:'',
                             photoUrl:'',
                             endDate:''
                         }}
                         onSubmit={values => {
                             const dateToTStamp = new Date(`${values.endDate}`).getTime();
-                            console.log(typeof(values.endDate),values.endDate,dateToTStamp);//DELETE AFTER USE
-                            handleCreateAuction(values.title,values.description,values.initialPrice,values.bidIncrement,values.photoUrl,dateToTStamp);
+                            handleUpdateAuction(values.title,values.description,values.photoUrl,dateToTStamp);
                         }}
                         validationSchema={schema}
                     >
@@ -123,30 +117,6 @@ export function Sell({navigation}) {
                                 placeholder='describe your auction'/>
                                 {errors.description && touched.description 
                                 ? <Text style={styles.errorText}>{errors.description}</Text> 
-                                : null}
-                            </View>
-                             <View>
-                                <TextInput
-                                mode='outlined'
-                                keyboardType='number-pad'
-                                value={values.initialPrice}
-                                onChangeText={handleChange('initialPrice')}
-                                onBlur={handleBlur('initialPrice')}
-                                placeholder='initial price'/>
-                                {errors.initialPrice && touched.initialPrice 
-                                ? <Text style={styles.errorText}>{errors.initialPrice}</Text> 
-                                : null}
-                            </View>
-                             <View>
-                                <TextInput
-                                mode='outlined'
-                                keyboardType='number-pad'
-                                value={values.bidIncrement}
-                                onChangeText={handleChange('bidIncrement')}
-                                onBlur={handleBlur('bidIncrement')}
-                                placeholder='bid increment'/>
-                                {errors.bidIncrement && touched.bidIncrement 
-                                ? <Text style={styles.errorText}>{errors.bidIncrement}</Text> 
                                 : null}
                             </View>
                             <View>
@@ -211,7 +181,7 @@ export function Sell({navigation}) {
                             buttonColor={theme.colors.navy}
                             textColor={theme.colors.dullRed0}
                             style={{paddingVertical:8}}
-                            onPress={handleSubmit}>Create Auction</Button>
+                            onPress={handleSubmit}>Update Auction</Button>
                             </>
                         )}
                     </Formik>
