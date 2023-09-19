@@ -31,7 +31,7 @@ const schema = yup.object().shape({
 export function Sell({navigation}) {
     const {user} = useContext(AppContext);
     const [categorySelected,setCategorySelected] = useState(null);
-    const [showLoader,setShowLoader] = useState(true);
+    const [showLoader,setShowLoader] = useState(false);
 
     const handleCreateAuction = async (title,description,initialPrice,bidIncrement,photoUrl,endDate) => {
         setShowLoader(true);

@@ -1,40 +1,71 @@
 import { useState,useContext, useEffect } from "react";
 import { AppContext } from "../config/app-context";
-import { View,StyleSheet,TouchableOpacity,Image,FlatList,Text,StatusBar,Platform,SafeAreaView } from "react-native";
+import { View,StyleSheet,TouchableOpacity,Image,FlatList,Text,StatusBar,Platform,SafeAreaView,Alert } from "react-native";
 import { db } from "../config/firebase.config";
-import { getDocs,collection,query,where,orderBy } from "firebase/firestore";
+import { onSnapshot,collection,query,where,orderBy,deleteDoc,doc } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrash,faPen } from "@fortawesome/free-solid-svg-icons";
 import { theme } from "../config/theme";
 import { getRemainingTime } from "../utilities/time-remaining";
 import { CommaSepNum } from "../utilities/comma-sep-num";
+import { ScreenLoaderIndicatorOpacity } from "../utilities/screen-loader-indicator-with-opacity";
 
 export function MyAuctions() {
     const [myAuctions,setMyAuctions] = useState([]);
     const {user} = useContext(AppContext);
+    const [showLoader,setShowLoader] = useState(false);
 
-    const getMyAuctions = async () => {
+    const getMyAuctions = () => {
         const q = query(
             collection(db,'auctions'),
             where('createdBy','==',JSON.parse(user).user_uid),
             orderBy('createdAt','desc')
             );
-        const onSnap = await getDocs(q);
-        setMyAuctions(onSnap.docs.map(doc => {
-            return {
-                id:doc.id,
-                data:{
-                    ...doc.data()
-                }
-            }
-        }))
+        onSnapshot(q, onSnap => {
+            const auctions = [];
+            onSnap.forEach(doc => {
+                auctions.push({
+                    id:doc.id,
+                    data:doc.data()
+                });
+
+                setMyAuctions(auctions)
+            })
+        });
     }
     
     useEffect(() => {
         getMyAuctions()
-    },[])
+    },[]);
+
+    const handleDelete = async (uid) => {
+        setShowLoader(true);
+
+        await deleteDoc(doc(db,'auctions',uid))
+        .then(() => {
+            setShowLoader(false);
+
+            Alert.alert(
+                'information',
+                'auction deleted!',
+                [{
+                    text:'Dismiss',
+                }]
+            )
+        })
+        .catch((e) => Alert.alert(
+            'information',
+            'An error has occured!',
+            [{
+                text:'Dismiss',
+                onPress:console.error(e)
+            }]
+        ))
+    }
 
     return (
+        <>
+        <ScreenLoaderIndicatorOpacity controlState={showLoader}/>
         <SafeAreaView style={styles.wrapper}>
             <View style={styles.container}>
                 <Text style={styles.heading}>Auctions I created</Text>
@@ -73,7 +104,9 @@ export function MyAuctions() {
                             </View>
                             
                             <View style={styles.actionSection}>
-                                <TouchableOpacity style={styles.actionCircle}>
+                                <TouchableOpacity 
+                                style={styles.actionCircle}
+                                onPress={() => handleDelete(item.id)}>
                                     <FontAwesomeIcon
                                     icon={faTrash}
                                     size={24}
@@ -87,6 +120,7 @@ export function MyAuctions() {
                 </View>
             </View>
         </SafeAreaView>
+        </>
     )
 }
 
@@ -112,7 +146,7 @@ const styles = StyleSheet.create({
         marginBottom:6
     },
     myAuctionsBlock:{
-    
+        marginTop:16,
     },
     actionSection:{
         flex:1,
