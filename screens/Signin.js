@@ -53,7 +53,8 @@ export function Signin({navigation}) {
                 let token_ = generateAlphaNumChars(36);
                 let dataForStorage = {
                     token:token_,
-                    user_uid:user.uid
+                    user_uid:user.uid,
+                    user_email:email,
                 }
 
                 setUser(user.uid);

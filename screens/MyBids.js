@@ -1,5 +1,143 @@
-import { Text } from "react-native";
+import { useState,useContext, useEffect } from "react";
+import { AppContext } from "../config/app-context";
+import { View,StyleSheet,TouchableOpacity,Image,FlatList,Text,StatusBar,Platform,SafeAreaView,Alert } from "react-native";
+import { db } from "../config/firebase.config";
+import { onSnapshot,collection,query,where,orderBy,deleteDoc,doc } from "firebase/firestore";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faWallet,faPen } from "@fortawesome/free-solid-svg-icons";
+import { theme } from "../config/theme";
+import { getRemainingTime } from "../utilities/time-remaining";
+import { CommaSepNum } from "../utilities/comma-sep-num";
+import { ScreenLoaderIndicatorOpacity } from "../utilities/screen-loader-indicator-with-opacity";
 
-export function MyBids() {
-    return <Text>My bids</Text>
+export function MyBids({navigation}) {
+    const {user} = useContext(AppContext);
+    const [showLoader,setShowLoader] = useState(false);
+
+    const myBids = [
+        {
+            id:'tye6376376',
+            data:{
+                photoUrl:'https://pictures-nigeria.jijistatic.com/96492014_MTEyNS0xNTAwLWM5OTk3ZTU1NDE.webp',
+                endDate:'31/9/23',
+                title:'Kagaroo Cat For Grandpa',
+                currentBid:50,
+            }
+        }
+    ]
+
+    return (
+        <>
+        <ScreenLoaderIndicatorOpacity controlState={showLoader}/>
+        <SafeAreaView style={styles.wrapper}>
+            <View style={styles.container}>
+                <View style={styles.myAuctionsBlock}>
+                    <FlatList
+                    data={myBids}
+                    initialNumToRender={10}
+                    renderItem={({item}) => (
+                        <View style={styles.auctionItem}>
+                            <View style={styles.actionSection}>
+                                <TouchableOpacity 
+                                style={styles.actionCircle}
+                                >
+                                    <FontAwesomeIcon 
+                                    icon={faPen} 
+                                    size={24}
+                                    color={theme.colors.navy}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.auctionDetails}>
+                                <Image
+                                style={styles.productImg}
+                                source={{uri:item.data.photoUrl}}/>
+                                <View>
+                                    <Text style={{fontSize:12,color:theme.colors.navy}}>
+                                        {getRemainingTime(item.data.endDate)}
+                                    </Text>
+                                    <Text style={{fontSize:14,color:theme.colors.dullRed1}}>
+                                        {item.data.title.length > 20 ? item.data.title.slice(0,20)+'...' : item.data.title}
+                                    </Text>
+                                    <Text style={{fontSize:20,fontWeight:'600',color:theme.colors.dullRed1}}>
+                                        ₦{CommaSepNum(item.data.currentBid)}
+                                    </Text>
+                                </View>
+                            </View>
+                            
+                            <View style={styles.actionSection}>
+                                <TouchableOpacity 
+                                style={styles.actionCircle}
+                                onPress={() => navigation.navigate('payment',{
+                                    id:item.id,
+                                    amount:item.data.currentBid,
+                                })}>
+                                    <FontAwesomeIcon
+                                    icon={faWallet}
+                                    size={24}
+                                    color={theme.colors.navy}/>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    )}
+                    showsVerticalScrollIndicator={false}
+                    key={({item}) => item.id}/>
+                </View>
+            </View>
+        </SafeAreaView>
+        </>
+    )
 }
+
+const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+        marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    },
+    container: {
+        flex: 1,
+        paddingHorizontal: 8,
+    },
+    heading:{
+        fontSize:22
+    },
+    auctionItem:{
+        flex:1,
+        flexDirection:'row',
+        alignItems:'center',
+        backgroundColor:'white',
+        borderRadius:8,
+        padding:6,
+        marginBottom:6
+    },
+    myAuctionsBlock:{
+        marginTop:16,
+    },
+    actionSection:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    auctionDetails:{
+        flex:4,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        gap:4,
+        marginHorizontal:4,
+    },
+    productImg:{
+        width:80,
+        height:100,
+        borderRadius:8
+    },
+    actionCircle:{
+        width:44,
+        height:44,
+        backgroundColor:theme.colors.dullRed0,
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:50
+    }
+})

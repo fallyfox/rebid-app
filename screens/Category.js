@@ -48,7 +48,8 @@ export function Category({navigation,route}) {
                         style={[
                             styles.expItem,
                             {backgroundColor:theme.colors.navy,marginBottom:8,}
-                            ]}>
+                            ]}
+                        onPress={() => navigation.navigate('auction details',{auction_uid:item.id})}>
                             <Image
                             style={styles.productImg}
                             source={{uri:item.data.photoUrl}}/>
